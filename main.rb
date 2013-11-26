@@ -9,9 +9,6 @@ include Util
 include Crypt
 include Simple_DES
 
-#puts exp(35, 10000000000, 100500)
-#puts OpenSSL::BN::new(35.to_s).mod_exp(1000000,100500)
-#exit
 
 # a = 'abracadabra'
 # d = DES_encrypt(5, a)
