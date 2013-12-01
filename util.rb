@@ -59,6 +59,7 @@ module Util
   end
   
   def exp_test(public_exp, private_exp, e_n)
+    return false if public_exp<0 or private_exp<0
     return true if private_exp*public_exp % e_n == 1
     false
   end

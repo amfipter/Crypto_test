@@ -36,6 +36,7 @@ class Server
   end
 
   def shamir_server
+    #encoding: koi8-r
     d1, d2, n = key_gen_shamir($bits)
     puts "server started"
     Signal.trap("INT") do
@@ -45,12 +46,32 @@ class Server
     loop do
       data = Array.new
       client = @server.accept
+      puts "client connect"
       client.puts n
+      puts 'send n: ' + n.to_s
+
       num = client.gets.chomp.to_i
+      puts "data size: " + num.to_s
+
       num.times {data.push shamir_get_msg(client, d1, d2, n)}
-      data.map {|j| (j.to_s(16).scan(/../).map {|i| i.to_i(16)}).pack('c*')}
+      puts "get data: " + data.size.to_s
+      puts data
+      data_t = Array.new
+      data.each do |j|
+        puts "================================"
+        t = (j.to_s(16).scan(/../).map {|i| i.to_i(16)}).pack('C*')
+        puts j
+        puts t
+        puts "==========================================="
+        data_t.push t 
+      end
+      data = data_t
+      #data.map {|j| (j.to_s(16).scan(/../).map {|i| i.to_i(16)}).pack('c*')}
+      #puts data
+      exit
       f_name = data.shift
-      file = File.open(f_name + '.copy', 'w')
+      puts f_name
+      file = File.open(f_name.to_s + '.copy', 'w')
       data.each {|chunk| file.print chunk}
       file.close
     end
