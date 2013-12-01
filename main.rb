@@ -22,6 +22,8 @@ include Simple_DES
 
 $ip = '127.0.0.1'
 $port = 43045
+$bits = 1024
+$file_name = nil
 
 if ARGV[0].eql?('-s')
   $server = true
@@ -33,11 +35,15 @@ end
 #   $port = ARGV[1].to_i
 # end
 
-if ARGV[1].eql?('-t')
-  $test = true
-else
-  $test = false
+unless ARGV[1].nil?
+	$file_name = ARGV[1]
 end
+
+# if ARGV[1].eql?('-t')
+#   $test = true
+# else
+#   $test = false
+# end
 
 # if ($server == false and $test == false)
 #   $file_name = ARGV[3]
@@ -47,7 +53,7 @@ if ($server)
   $e, $d, $n = key_gen(1024)
   server = Server.new
 else
-  client = Client.new
+  client = Client.new($file_name)
 end
 
 

@@ -1,10 +1,13 @@
 class Client
   include Crypt
-  def initialize
+  include Util
+  def initialize(file_name=nil)
     @port = $port
     @ip = $ip
+    @file = file_name
     @size = 1024 * 1024 * 10
-    client
+    #client
+    shamir_client
   end
 
   def client
@@ -21,7 +24,31 @@ class Client
   end
 
   def shamir_client
-    nil
+    raise Exception.new("need file") if @file.nil?
+    #encoding: koi8-r
+    server = TCPSocket.open(@ip, @port)
+    byte_size = $bits / 8 - 1
+    n = server.gets.chomp.to_i
+    d1, d2, n = key_gen_shamir($bits, n)
+    data = Array.new
+    data.push @file
+    file = File.open(@file, 'r')
+    raw = file.read
+    file.close
+    data += raw.scan /.{#{byte_size}}/
+    data.map {|i| i.bytes.inject {|a, b| (a<<8) + b}}
+    server.puts data.size
+    data.each {|i| shamir_send_msg(i, server, d1, d2, n)}
+    server.close
+
+  end
+
+  def shamir_send_msg(msg, server, d1, d2, n)
+    data1 = exp(msg.to_i, d1, n)
+    server.puts data1
+    data2 = server.gets.chomp
+    data3 = exp(data2.to_i, d2, n)
+    server.puts data3
   end
 
   def gen_session_key

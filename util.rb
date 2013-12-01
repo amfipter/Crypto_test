@@ -46,6 +46,17 @@ module Util
     end
     return public_exp, private_exp, n
   end
+
+  def key_gen_shamir(bits, n=nil)
+    n = gen(bits) if n.nil?
+    e_n = n-1
+    while(true) do
+      d1 = gen(bits/2)
+      d2 = inverse(d1, e_n)
+      break if exp_test(d1, d2, e_n)
+    end
+    return d1, d2, n
+  end
   
   def exp_test(public_exp, private_exp, e_n)
     return true if private_exp*public_exp % e_n == 1
