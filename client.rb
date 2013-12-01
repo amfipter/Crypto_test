@@ -20,6 +20,10 @@ class Client
     puts key
   end
 
+  def shamir_client
+    nil
+  end
+
   def gen_session_key
     key = rand(2**63..2**64)
     key

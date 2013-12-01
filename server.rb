@@ -32,4 +32,8 @@ class Server
       end      
     end
   end
+
+  def shamir_server
+    nil
+  end
 end
