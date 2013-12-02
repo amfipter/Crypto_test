@@ -60,6 +60,7 @@ class Client
     file.close
     #exit
     data += raw_arr
+    data.map! {|i| '1' + i}
     puts data
     #data.map {|i| i.bytes.inject {|a, b| (a<<8) + b}}
     data_t = Array.new
@@ -72,6 +73,10 @@ class Client
       data_t.push t
     end
     data = data_t
+    raw_arr.unshift @file
+    out = raw_arr.join
+    puts Digest::SHA512.hexdigest(out)
+    
     puts data
     puts "data: " + data.size.to_s
     server.puts data.size

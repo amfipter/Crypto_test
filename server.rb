@@ -59,16 +59,22 @@ class Server
       data_t = Array.new
       data.each do |j|
         puts "================================"
-        t = (j.to_s(16).scan(/../).map {|i| i.to_i(16)}).pack('C*')
+        j1 = j.to_s(16)
+        #j = '0' + j if j.size % 2 == 1
+        t = (j1.scan(/../).map {|i| i.to_i(16)}).pack('C*')
+        t.sub! /^./, ''
         puts j
         puts t
         puts "==========================================="
         data_t.push t 
       end
       data = data_t
+      out = data.join
+      puts out
+      puts Digest::SHA512.hexdigest(out)
       #data.map {|j| (j.to_s(16).scan(/../).map {|i| i.to_i(16)}).pack('c*')}
       #puts data
-      exit
+      #exit
       f_name = data.shift
       puts f_name
       file = File.open(f_name.to_s + '.copy', 'w')
