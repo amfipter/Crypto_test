@@ -10,10 +10,10 @@ class Server
     @client_e = nil
     @client_n = nil
     #server
-    shamir_server
+    rsa_server
   end
   
-  def server
+  def DES_server
     puts "server started"
     Signal.trap("INT") do
       puts "Terminating server.."
@@ -34,6 +34,36 @@ class Server
       end      
     end
   end
+
+  def rsa_server
+    #encoding: koi8-r
+    e, d, n = key_gen($bits)
+    puts "server started"
+    Signal.trap("INT") do
+      puts "Terminating server.."
+      exit
+    end
+    loop do
+      data = Array.new 
+      client = @server.accept
+      puts "Connected"
+      client.puts e
+      client.puts n
+      #puts "Keys"
+      size = client.gets.chomp.to_i
+      size.times do
+        chunk = client.gets.chomp.to_i
+        data.push exp(chunk, d, n)
+      end
+      data.map! {|i| (i.to_s(16).scan(/../).map {|j| j.to_i(16)}).pack('C*')}
+      data.map! {|i| i.sub(/^./, '')}
+      f_name = data.shift
+      out = data.join
+      File.open(f_name + '.copy', 'w') {|file| file.print(out) and file.close}
+      puts "data " + Digest::SHA512.hexdigest(out)
+    end
+  end
+
 
   def shamir_server
     #encoding: koi8-r
