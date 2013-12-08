@@ -5,6 +5,7 @@ require './util.rb'
 require './simple_DES.rb'
 require './server.rb'
 require './client.rb'
+require './signature.rb'
 include Util
 include Crypt
 include Simple_DES
@@ -18,6 +19,9 @@ include Simple_DES
 # puts "dec"
 # puts d
 # exit
+s = Signature.new
+exit
+
 
 
 $ip = '127.0.0.1'
