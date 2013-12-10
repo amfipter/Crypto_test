@@ -20,6 +20,8 @@ include Simple_DES
 # puts d
 # exit
 s = Signature.new
+s.mark(ARGV[0])
+s.check((ARGV[0]))
 exit
 
 

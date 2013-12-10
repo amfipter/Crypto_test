@@ -137,8 +137,8 @@ module Crypt
   end
   
   def exp(g, deg, m)
-    out = OpenSSL::BN::new(g.to_s).mod_exp(deg,m)
-    return out
+    # out = OpenSSL::BN::new(g.to_s).mod_exp(deg,m)
+    # return out
     a = bit_repr(deg)
     z = 1
     y = g

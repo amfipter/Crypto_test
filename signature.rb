@@ -19,10 +19,6 @@ class Signature
     i = 0
     while(true) do
       n = q * b + 1
-      #puts b%2
-      #puts q%2
-      #puts n%2
-      #exit
       break if miller_rabin_test(n, 100)
       b += 2
       i += 1
@@ -35,7 +31,78 @@ class Signature
     puts (n-1) / (q + 1)
     puts n.size
     puts q.size
+    puts n - b*q
+
+    while(true)
+      a = gen(32)
+      a = exp(a, b, n)
+      #puts '='
+      #puts a
+      #puts q
+      #puts n
+      w = exp(a, q, n)
+      #puts 'end'
+      #puts w
+      break if w == 1
+    end
+    puts '______________'
+    x = gen(128) #secret
+    puts a
+    puts x
+    y = exp(a, x, n) #public
+    puts '______________'
+
+
+    @n = n
+    @q = q
+    @b = b
+    @a = a
+    @x = x
+    @y = y
   end
+
+  def mark(name)
+    puts '==========='
+    file = File.open(name, 'r') 
+    data = file.read
+    file.close
+    hash = Digest::SHA512.hexdigest(data).to_i(16)
+    puts hash
+    n = 0
+    #hash.bytes.inject {|a, b| (a<<8) + b}
+    #puts hash
+    while(true) do
+      k = gen(128)
+      r = exp(@a,k, @n) % @q
+      s = (k*hash + @x*r) % @q
+      break if r!=0 and s !=0
+    end
+    puts r
+    puts s
+
+    @r = r
+    @s = s
+
+  end
+
+  def check(name)
+    data = nil
+    File.open(name, 'r') {|file| data = file.read and file.close}
+    hash = Digest::SHA512.hexdigest(data).to_i(16)
+    puts hash
+    #hash.bytes.inject {|a, b| (a<<8) + b}
+    #puts hash
+    raise Exception.new("fail to check sign") if (@r <= 0 or @r >= @q or @s <= 0 or @s >= @q)
+    h1 = inverse(hash, @n)
+    u1 = @s*h1 % @q
+    u2 = -@r*h1 % @q
+    v = (exp(@a, u1, @n) * exp(@y, u2, @n) % @n) % @q
+    puts "-------------"
+    puts v
+    puts @r
+    raise Exception.new("fail to check sign") if v != @r
+  end
+
 
   def gen_keys()
     bits = 128

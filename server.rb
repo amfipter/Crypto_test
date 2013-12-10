@@ -45,7 +45,7 @@ class Server
     end
     loop do
       data = Array.new 
-      client = @server.accept
+      client = @server.accept 
       puts "Connected"
       client.puts e
       client.puts n
