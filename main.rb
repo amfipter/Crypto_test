@@ -6,6 +6,7 @@ require './simple_DES.rb'
 require './server.rb'
 require './client.rb'
 require './signature.rb'
+require './proof.rb'
 include Util
 include Crypt
 include Simple_DES
@@ -19,6 +20,9 @@ include Simple_DES
 # puts "dec"
 # puts d
 # exit
+g = Graph.new(10)
+exit
+
 s = Signature.new
 s.mark(ARGV[0])
 s.check((ARGV[0]))

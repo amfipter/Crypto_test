@@ -89,14 +89,11 @@ class Server
       data_t = Array.new
       data.each do |j|
         puts "================================"
-<<<<<<< HEAD
-        t = (j.to_s(16).split(/[, \.?!]+/).map {|i| i.to_i(16)}).pack('C*')
-=======
+        #t = (j.to_s(16).split(/[, \.?!]+/).map {|i| i.to_i(16)}).pack('C*')
         j1 = j.to_s(16)
         #j = '0' + j if j.size % 2 == 1
         t = (j1.scan(/../).map {|i| i.to_i(16)}).pack('C*')
         t.sub! /^./, ''
->>>>>>> 09a7a535dcfa97358dce2fa7ff181025d5888272
         puts j
         puts t
         puts "==========================================="
