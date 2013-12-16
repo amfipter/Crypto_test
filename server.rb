@@ -59,7 +59,7 @@ class Server
       data_t = Array.new
       data.each do |j|
         puts "================================"
-        t = (j.to_s(16).scan(/../).map {|i| i.to_i(16)}).pack('C*')
+        t = (j.to_s(16).split(/[, \.?!]+/).map {|i| i.to_i(16)}).pack('C*')
         puts j
         puts t
         puts "==========================================="
