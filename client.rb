@@ -7,10 +7,10 @@ class Client
     @file = file_name
     @size = 1024 * 1024 * 10
     #client
-    shamir_client
+    rsa_client
   end
 
-  def client
+  def DES_client
     puts "client started"
     server = TCPSocket.open(@ip, @port)
     e = server.gets.chomp.to_i
@@ -23,21 +23,34 @@ class Client
     puts key
   end
 
+  def rsa_client
+    raise Exception.new("need file") if @file.nil?
+    #encoding: koi8-r
+    server = TCPSocket.open(@ip, @port)
+    puts "connect"
+    e = server.gets.chomp.to_i
+    n = server.gets.chomp.to_i
+    byte_size = $bits / 8 - 1
+    data = Array.new
+    File.open(@file, 'r') do |file| 
+      while(chunk = file.read(byte_size)) do 
+        data.push chunk
+      end 
+      file.close
+    end
+    out = data.join
+    data.unshift @file
+    data.map! {|i| "1" + i}
+    data.map! {|i| i.bytes.inject {|a, b| (a<<8) + b}}
+    server.puts data.size
+    data.each {|el| server.puts exp(el, e, n)}
+    server.close
+    puts "data " + Digest::SHA512.hexdigest(out)
+  end
+
   def shamir_client
     raise Exception.new("need file") if @file.nil?
     #encoding: koi8-r
-    # d1, d2, n = key_gen_shamir(128)
-    # puts d1
-    # puts d2
-    # #d2 = n + d2 if d2 < 0
-    # puts n
-    # t = rand(2**16..2**18)
-    # puts t
-    # t1 = exp(t, d1, n)
-    # puts t1
-    # t2 = exp(t1, d2, n)
-    # puts t2
-    # exit
 
     server = TCPSocket.open(@ip, @port)
     puts "connect"
@@ -60,6 +73,7 @@ class Client
     file.close
     #exit
     data += raw_arr
+    data.map! {|i| '1' + i}
     puts data
     #data.map {|i| i.bytes.inject {|a, b| (a<<8) + b}}
     data_t = Array.new
@@ -72,6 +86,10 @@ class Client
       data_t.push t
     end
     data = data_t
+    raw_arr.unshift @file
+    out = raw_arr.join
+    puts Digest::SHA512.hexdigest(out)
+    
     puts data
     puts "data: " + data.size.to_s
     server.puts data.size

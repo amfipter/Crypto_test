@@ -10,10 +10,10 @@ class Server
     @client_e = nil
     @client_n = nil
     #server
-    shamir_server
+    rsa_server
   end
   
-  def server
+  def DES_server
     puts "server started"
     Signal.trap("INT") do
       puts "Terminating server.."
@@ -34,6 +34,36 @@ class Server
       end      
     end
   end
+
+  def rsa_server
+    #encoding: koi8-r
+    e, d, n = key_gen($bits)
+    puts "server started"
+    Signal.trap("INT") do
+      puts "Terminating server.."
+      exit
+    end
+    loop do
+      data = Array.new 
+      client = @server.accept 
+      puts "Connected"
+      client.puts e
+      client.puts n
+      #puts "Keys"
+      size = client.gets.chomp.to_i
+      size.times do
+        chunk = client.gets.chomp.to_i
+        data.push exp(chunk, d, n)
+      end
+      data.map! {|i| (i.to_s(16).scan(/../).map {|j| j.to_i(16)}).pack('C*')}
+      data.map! {|i| i.sub(/^./, '')}
+      f_name = data.shift
+      out = data.join
+      File.open(f_name + '.copy', 'w') {|file| file.print(out) and file.close}
+      puts "data " + Digest::SHA512.hexdigest(out)
+    end
+  end
+
 
   def shamir_server
     #encoding: koi8-r
@@ -59,16 +89,26 @@ class Server
       data_t = Array.new
       data.each do |j|
         puts "================================"
+<<<<<<< HEAD
         t = (j.to_s(16).split(/[, \.?!]+/).map {|i| i.to_i(16)}).pack('C*')
+=======
+        j1 = j.to_s(16)
+        #j = '0' + j if j.size % 2 == 1
+        t = (j1.scan(/../).map {|i| i.to_i(16)}).pack('C*')
+        t.sub! /^./, ''
+>>>>>>> 09a7a535dcfa97358dce2fa7ff181025d5888272
         puts j
         puts t
         puts "==========================================="
         data_t.push t 
       end
       data = data_t
+      out = data.join
+      puts out
+      puts Digest::SHA512.hexdigest(out)
       #data.map {|j| (j.to_s(16).scan(/../).map {|i| i.to_i(16)}).pack('c*')}
       #puts data
-      exit
+      #exit
       f_name = data.shift
       puts f_name
       file = File.open(f_name.to_s + '.copy', 'w')

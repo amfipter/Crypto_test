@@ -13,10 +13,11 @@ module Util
     end
     g.times do
       a = 2 + rand(n-4)
-      x = OpenSSL::BN::new(a.to_s).mod_exp(d,n) #x = (a**d) % n
+      #x = OpenSSL::BN::new(a.to_s).mod_exp(d,n) #x = (a**d) % n
+      x = exp(a,d,n)
       next if x == 1 or x == n-1
       for r in (1 .. s-1)
-        x = x.mod_exp(2,n)  #x = (x**2) % n
+        x = exp(x,2,n)  #x = (x**2) % n
         return false if x == 1
         break if x == n-1
       end
@@ -80,9 +81,12 @@ module Util
     t
   end
   
-  def extend_euclid(a, b, x, y, d)
+  def extend_euclid(a, b)
     q = nil
     r = nil
+    x = 0
+    y = 0
+    d = 0
     x1 = 0
     x2 = 1
     y1 = 1
@@ -109,7 +113,7 @@ module Util
   end
   
   def inverse(a, n)
-    x, d = extend_euclid(a, n, 0, 0, 0)
+    x, d = extend_euclid(a, n)
     return x if d == 1
     nil
   end
@@ -117,12 +121,14 @@ end
 
 module Crypt
   def dec_num(num)
-    out = OpenSSL::BN::new(num.to_s).mod_exp($d,$n) #exp(num, $d, $n) #(byte**$d) % $n
+    #out = OpenSSL::BN::new(num.to_s).mod_exp($d,$n) #exp(num, $d, $n) #(byte**$d) % $n
+    out = exp(num, $d, $n)
     out
   end
   
   def enc_num(num, e, n)
-    out = OpenSSL::BN::new(num.to_s).mod_exp(e,n) #exp(num, e, n)  #(byte**e) % n
+    #out = OpenSSL::BN::new(num.to_s).mod_exp(e,n) #exp(num, e, n)  #(byte**e) % n
+    out = exp(num, e, n)
     out
   end
   
@@ -131,6 +137,8 @@ module Crypt
   end
   
   def exp(g, deg, m)
+    # out = OpenSSL::BN::new(g.to_s).mod_exp(deg,m)
+    # return out
     a = bit_repr(deg)
     z = 1
     y = g
