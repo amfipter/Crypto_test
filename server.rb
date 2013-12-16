@@ -35,6 +35,20 @@ class Server
     end
   end
 
+  def proof_server
+    puts "server started"
+    Signal.trap("INT") do
+      puts "Terminating server.."
+      exit
+    end
+    loop do
+      data = Array.new 
+      client = @server.accept 
+      puts "Connected"
+      
+    end
+  end
+
   def rsa_server
     #encoding: koi8-r
     e, d, n = key_gen($bits)

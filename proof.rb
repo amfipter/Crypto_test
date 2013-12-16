@@ -29,10 +29,14 @@ class Graph
 		if(@rsa_n.nil? or @rsa_d.nil? or @rsa_e.nil?)
 			@rsa_e, @rsa_d, @rsa_n = key_gen(@bits)
 		end
-		@F = @H_.clone
+		@F = clone(@H_)
 		@F.keys.each do |i|
 			@F[i].keys.each {|j| @F[i][j] = exp(@F[i][j], @rsa_e, @rsa_n)}
 		end
+	end
+
+	def get_encrypted_graph()
+		pack(@F)
 	end
 
 	def pack(m)
@@ -115,7 +119,8 @@ class Graph
 		#gen_random_path()
 		gen_isomorphic_graph()
 		code_matrix()
-		decode_matrix()
+		crypt_matrix()
+		#decode_matrix()
 		puts gam_chech(@H, @V_H)
 		puts cmp_matrix(unpack(pack(@H)), @H)
 	end

@@ -23,6 +23,18 @@ class Client
     puts key
   end
 
+  def proof_client
+    graph = Graph.new(10)
+    data = graph.get_encrypted_graph
+    server = TCPSocket.open(@ip, @port)
+    puts "connect"
+    loop do
+      #cycle
+    end
+
+  end
+
+
   def rsa_client
     raise Exception.new("need file") if @file.nil?
     #encoding: koi8-r
