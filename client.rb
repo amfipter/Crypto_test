@@ -7,7 +7,8 @@ class Client
     @file = file_name
     @size = 1024 * 1024 * 10
     #client
-    rsa_client
+    #rsa_client
+    proof_client
   end
 
   def DES_client
@@ -25,11 +26,30 @@ class Client
 
   def proof_client
     graph = Graph.new(10)
+    graph.create
+    rsa_e = graph.rsa_e
+    rsa_n = graph.rsa_n
+    puts rsa_e
+    puts rsa_n
     data = graph.get_encrypted_graph
     server = TCPSocket.open(@ip, @port)
+    server.puts rsa_e.to_s
+    server.puts rsa_n.to_s
     puts "connect"
     loop do
       #cycle
+      break if server.gets.chomp.eql?('exit')
+      server.puts data
+      request = server.gets.chomp.to_i
+      if(request == 1)
+        server.puts graph.get_encoded_path()
+      elsif(request == 2)
+        server.puts graph.get_translate_array()
+        server.puts graph.get_encoded_graph()
+      end
+      graph.renew
+      data = graph.get_encrypted_graph
+
     end
 
   end

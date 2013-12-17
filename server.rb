@@ -10,7 +10,9 @@ class Server
     @client_e = nil
     @client_n = nil
     #server
-    rsa_server
+    #rsa_server
+    @proof_count = 100
+    proof_server
   end
   
   def DES_server
@@ -37,14 +39,51 @@ class Server
 
   def proof_server
     puts "server started"
+    graph = Graph.new()
     Signal.trap("INT") do
       puts "Terminating server.."
       exit
     end
     loop do
-      data = Array.new 
+      data = nil 
       client = @server.accept 
+      rsa_e = client.gets.chomp.to_i
+      rsa_n = client.gets.chomp.to_i
+      graph.rsa_e = rsa_e
+      graph.rsa_n = rsa_n
       puts "Connected"
+      @proof_count.times do
+        client.puts "OK"
+        data = client.gets.chomp
+        graph.set_encrypted_graph(data)
+        request = rand(1..2) #1-cycle; 2-isomorphic
+        client.puts request.to_s
+        if(request == 1)
+          puts 'CYCLE TEST!!'
+          encoded_path = client.gets.chomp
+          unless(graph.check_encoded_path(encoded_path))
+            puts "FAIL"
+            puts "1-cycle"
+            exit
+          end
+        elsif(request == 2)
+          puts 'ISOMORPHIC TEST!!'
+          translate_array = client.gets.chomp
+          encoded_graph = client.gets.chomp
+          graph.set_translate_array(translate_array)
+          graph.set_encoded_graph(encoded_graph)
+          unless(graph.check_isomorphic_graph())
+            puts 'FAIL'
+            puts '2-isomorphic'
+            exit
+          end
+        end
+        puts 'ITERATION'
+      end
+      client.puts "exit"
+      puts "PROOF COMPLETE"
+
+
       
     end
   end

@@ -20,13 +20,13 @@ include Simple_DES
 # puts "dec"
 # puts d
 # exit
-g = Graph.new(10)
-exit
+# g = Graph.new(10)
+# exit
 
-s = Signature.new
-s.mark(ARGV[0])
-s.check((ARGV[0]))
-exit
+# s = Signature.new
+# s.mark(ARGV[0])
+# s.check((ARGV[0]))
+# exit
 
 
 
@@ -40,6 +40,13 @@ if ARGV[0].eql?('-s')
 else
   $server = false
 end
+
+if($server)
+	server = Server.new
+else
+	client = Client.new
+end
+exit
 
 # unless ARGV[1].nil?
 #   $port = ARGV[1].to_i
