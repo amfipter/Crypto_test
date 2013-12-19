@@ -52,7 +52,7 @@ class Graph
 		out = Array.new
 		(@V_H.size - 1).times do |i|
 			out.push @V_H[i]		#e1
-			out.push @V_H[i+1]		#e2
+			out.push @V_H[i]		#e2
 			out.push @H_[@V_H[i]][@V_H[i+1]]	#e
 		end
 		puts "PATH"
@@ -238,7 +238,7 @@ class Graph
 			1.upto(@n) {|j| @G[i][j] = 0}
 		end
 		generate_path()
-		#gen_random_path()
+		gen_random_path()
 		gen_isomorphic_graph()
 		code_matrix()
 		crypt_matrix()

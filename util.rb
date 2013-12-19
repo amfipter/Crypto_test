@@ -139,7 +139,7 @@ module Crypt
   def exp(g, deg, m)
     # out = OpenSSL::BN::new(g.to_s).mod_exp(deg,m)
     # return out
-    a = bit_repr(deg)
+    a = bit_repr(deg) 1 0 1 0
     z = 1
     y = g
     a.size.times do |t|
