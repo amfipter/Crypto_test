@@ -23,17 +23,17 @@ include Simple_DES
 # g = Graph.new(10)
 # exit
 
-# s = Signature.new
-# s.mark(ARGV[0])
-# s.check((ARGV[0]))
-# exit
+s = Signature.new
+s.mark(ARGV[0])
+s.check((ARGV[0]))
+exit
 
 
 
-$ip = '127.0.0.1'
-$port = 43045
-$bits = 1024
-$file_name = nil
+# $ip = '127.0.0.1'
+# $port = 43045
+# $bits = 1024
+# $file_name = nil
 
 if ARGV[0].eql?('-s')
   $server = true

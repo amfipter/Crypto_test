@@ -66,7 +66,7 @@ class Signature
     file = File.open(name, 'r') 
     data = file.read
     file.close
-    hash = Digest::SHA512.hexdigest(data).to_i(16)
+    hash = Digest::SHA512.hexdigest(data).to_i(16) % gen(250)
     puts hash
     n = 0
     #hash.bytes.inject {|a, b| (a<<8) + b}
